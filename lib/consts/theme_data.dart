@@ -12,7 +12,6 @@ class Styles {
       textSelectionTheme: TextSelectionThemeData(
         cursorColor: isDarkTheme ? Colors.white : Colors.black,
         selectionColor: Colors.blue,
-
         // selectionHandleColor: Colors.blue,
       ),
       textTheme: Theme.of(context).textTheme.apply(

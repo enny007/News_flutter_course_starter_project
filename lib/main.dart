@@ -1,5 +1,8 @@
 //Packages
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:news_app_flutter_course/providers/news_provider.dart';
+import 'package:news_app_flutter_course/screens/blog_details.dart';
 import 'package:provider/provider.dart';
 
 //Screens
@@ -12,7 +15,13 @@ import 'consts/theme_data.dart';
 import 'providers/theme_provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((value) {
+    runApp(
+      const MyApp(),
+    );
+  });
 }
 
 class MyApp extends StatefulWidget {
@@ -25,7 +34,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   //Need it to access the theme Provider
   ThemeProvider themeChangeProvider = ThemeProvider();
-
+  NewsProvider newsProvider = NewsProvider();
   @override
   void initState() {
     getCurrentAppTheme();
@@ -35,29 +44,37 @@ class _MyAppState extends State<MyApp> {
   //Fetch the current theme
   void getCurrentAppTheme() async {
     themeChangeProvider.setDarkTheme =
-        await themeChangeProvider.darkThemePreferences.getTheme();
+        (await themeChangeProvider.darkThemePreferences.getTheme());
   }
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) {
+        ChangeNotifierProvider(
+          create: (_) => themeChangeProvider,
           //Notify about theme changes
-          return themeChangeProvider;
-        }),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => newsProvider,
+        ),
       ],
       child:
           //Notify about theme changes
-          Consumer<ThemeProvider>(builder: (context, themeChangeProvider, ch) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Blog',
-          theme: Styles.themeData(themeChangeProvider.getDarkTheme, context),
-          home: const HomeScreen(),
-          routes: {},
-        );
-      }),
+          Consumer<ThemeProvider>(
+        builder: (context, themeChangeProvider, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Blog',
+            theme: Styles.themeData(themeChangeProvider.getDarkTheme, context),
+            home: const HomeScreen(),
+            routes: {
+              NewsDetailsScreen.routeName: (context) =>
+                  const NewsDetailsScreen()
+            },
+          );
+        },
+      ),
     );
   }
 }

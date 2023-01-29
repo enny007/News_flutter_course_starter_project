@@ -1,7 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ThemePreferences {
+class ThemePreferences with ChangeNotifier {
+  // SharedPreferences? prefs;
   static const THEME_STATUS = "THEMESTATUS";
+
 
   setDarkTheme(bool value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
